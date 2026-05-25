@@ -1,0 +1,9 @@
+{
+  "files.exclude": {
+    "__pycache__": true,
+    "*.pyc": true
+  },
+  "editor.formatOnSave": true,
+  "python.defaultInterpreterPath": "python",
+  "liveServer.settings.port": 5501
+}

@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Dashboard - Smart Crop Recommendation System</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- Import base styles first -->
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body class="dashboard-body">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="ph-fill ph-plant"></i>
+          <div>
+            <h2>Smart Crop</h2>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-target="predictor-view">
+          <i class="ph ph-plant"></i>
+          <span>Crop Predictor</span>
+        </a>
+        <a href="#" class="nav-item" data-target="history-view">
+          <i class="ph ph-map-trifold"></i>
+          <span>Field History</span>
+        </a>
+        <a href="#" class="nav-item" data-target="weather-view">
+          <i class="ph ph-cloud-sun"></i>
+          <span>Weather</span>
+        </a>
+        <a href="#" class="nav-item" data-target="pricing-view">
+          <i class="ph ph-currency-inr"></i>
+          <span>Profit Analysis</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Dynamic Views Container -->
+      <div class="views-container">
+        <!-- View 1: Crop Predictor -->
+        <div
+          id="predictor-view"
+          class="dashboard-view active"
+          style="display: block"
+        >
+          <div class="prediction-grid dashboard-prediction-grid">
+            <!-- Input Form Card -->
+            <div class="card input-card">
+              <div class="card-header">
+                <i class="ph-fill ph-plant"></i>
+                <h3>Enter Soil & Environmental Details</h3>
+              </div>
+              <form id="prediction-form" class="prediction-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="nitrogen">Nitrogen (N)</label>
+                    <div class="input-wrapper">
+                      <i class="ph-fill ph-flask"></i>
+                      <input
+                        type="number"
+                        id="nitrogen"
+                        placeholder="e.g., 90"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="phosphorus">Phosphorus (P)</label>
+                    <div class="input-wrapper">
+                      <i class="ph-fill ph-leaf"></i>
+                      <input
+                        type="number"
+                        id="phosphorus"
+                        placeholder="e.g., 42"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="potassium">Potassium (K)</label>
+                    <div class="input-wrapper">
+                      <div class="icon-text">K</div>
+                      <input
+                        type="number"
+                        id="potassium"
+                        placeholder="e.g., 40"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="humidity">Humidity (%)</label>
+                    <div class="input-wrapper">
+                      <i class="ph-fill ph-drop"></i>
+                      <input
+                        type="number"
+                        id="humidity"
+                        placeholder="e.g., 60"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="temperature">Temperature (°C)</label>
+                    <div class="input-wrapper">
+                      <i class="ph-fill ph-thermometer"></i>
+                      <input
+                        type="number"
+                        id="temperature"
+                        placeholder="e.g., 25.6"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="rainfall">Rainfall (mm)</label>
+                    <div class="input-wrapper">
+                      <i class="ph-fill ph-cloud-rain"></i>
+                      <input
+                        type="number"
+                        id="rainfall"
+                        placeholder="e.g., 120"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group full-width">
+                    <label for="ph">pH Value</label>
+                    <div class="input-wrapper">
+                      <i class="ph-fill ph-test-tube"></i>
+                      <input
+                        type="number"
+                        id="ph"
+                        step="0.1"
+                        placeholder="e.g., 6.5"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-block"
+                  id="predict-btn"
+                >
+                  <i class="ph-fill ph-plant"></i> Recommend Crop
+                </button>
+              </form>
+            </div>
+
+            <!-- Result Card -->
+            <div class="card result-card" id="result-card">
+              <div class="card-header">
+                <i class="ph-fill ph-leaf"></i>
+                <h3>Recommended Crop</h3>
+              </div>
+
+              <div
+                class="result-content"
+                id="result-content"
+                style="display: none"
+              >
+                <div class="crop-display">
+                  <div class="crop-info">
+                    <h2 class="crop-name">Rice</h2>
+                    <span class="badge">Confidence Score</span>
+                    <div class="confidence-circle">
+                      <svg viewBox="0 0 36 36" class="circular-chart green">
+                        <path
+                          class="circle-bg"
+                          d="M18 2.0845
+                                                a 15.9155 15.9155 0 0 1 0 31.831
+                                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                        />
+                        <path
+                          class="circle"
+                          stroke-dasharray="95, 100"
+                          d="M18 2.0845
+                                                a 15.9155 15.9155 0 0 1 0 31.831
+                                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                        />
+                        <text x="18" y="20.35" class="percentage">95%</text>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="crop-image">
+                    <img src="assets/rice_crop.png" alt="Rice Crop" />
+                  </div>
+                </div>
+
+                <div class="why-crop">
+                  <h4><i class="ph-fill ph-check-circle"></i> Why Rice?</h4>
+                  <p>
+                    The soil has medium nitrogen, high potassium, and suitable
+                    phosphorus levels. The temperature, humidity, pH value, and
+                    rainfall are ideal for Rice cultivation, making it a highly
+                    suitable choice.
+                  </p>
+                </div>
+
+                <div class="result-actions">
+                  <button
+                    class="btn btn-outline"
+                    type="button"
+                    id="download-report-btn"
+                  >
+                    <i class="ph ph-download-simple"></i> Download Report
+                  </button>
+                  <button
+                    class="btn btn-outline"
+                    type="button"
+                    id="save-history-btn"
+                  >
+                    <i class="ph ph-floppy-disk"></i> Save to History
+                  </button>
+                  <button
+                    class="btn btn-primary"
+                    type="button"
+                    id="new-prediction-btn"
+                  >
+                    <i class="ph ph-arrows-clockwise"></i> New Prediction
+                  </button>
+                </div>
+              </div>
+
+              <div class="empty-state" id="empty-state">
+                <i class="ph ph-plant"></i>
+                <p>
+                  Fill the details and click "Recommend Crop" to see the
+                  prediction here.
+                </p>
+              </div>
+
+              <div
+                class="loading-state"
+                id="loading-state"
+                style="display: none"
+              >
+                <div class="spinner"></div>
+                <p>Analyzing soil & weather data...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- View 2: Field History -->
+        <div id="history-view" class="dashboard-view" style="display: none">
+          <div class="dashboard-card">
+            <div class="card-header-flex">
+              <h3>Field History</h3>
+              <div class="search-bar history-search">
+                <i class="ph ph-magnifying-glass"></i>
+                <input
+                  type="text"
+                  id="history-search-input"
+                  placeholder="Search by crop, field, or date..."
+                />
+              </div>
+              <button class="btn btn-outline btn-sm">
+                <i class="ph ph-download-simple"></i> Export CSV
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table" id="history-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Field Name</th>
+                    <th>N-P-K (mg/kg)</th>
+                    <th>pH</th>
+                    <th>Temp/Hum/Rain</th>
+                    <th>Planted Crop</th>
+                    <th>Yield (Est.)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>12 Oct 2025</td>
+                    <td>North Field A</td>
+                    <td>90-42-43</td>
+                    <td>6.5</td>
+                    <td>25°C / 60% / 120mm</td>
+                    <td><strong class="text-primary">Rice</strong></td>
+                    <td>4.2 tons/ha</td>
+                  </tr>
+                  <tr>
+                    <td>05 Jun 2025</td>
+                    <td>East Plot 2</td>
+                    <td>104-18-30</td>
+                    <td>6.8</td>
+                    <td>28°C / 55% / 80mm</td>
+                    <td><strong class="text-primary">Maize</strong></td>
+                    <td>3.8 tons/ha</td>
+                  </tr>
+                  <tr>
+                    <td>20 Jan 2025</td>
+                    <td>South Farm</td>
+                    <td>20-60-85</td>
+                    <td>7.2</td>
+                    <td>22°C / 40% / 40mm</td>
+                    <td><strong class="text-primary">Cotton</strong></td>
+                    <td>1.5 tons/ha</td>
+                  </tr>
+                  <tr>
+                    <td>15 Nov 2024</td>
+                    <td>West Field</td>
+                    <td>120-40-20</td>
+                    <td>6.0</td>
+                    <td>20°C / 70% / 150mm</td>
+                    <td><strong class="text-primary">Sugarcane</strong></td>
+                    <td>75 tons/ha</td>
+                  </tr>
+                  <tr>
+                    <td>02 May 2024</td>
+                    <td>North Field A</td>
+                    <td>85-45-40</td>
+                    <td>6.6</td>
+                    <td>26°C / 65% / 110mm</td>
+                    <td><strong class="text-primary">Rice</strong></td>
+                    <td>4.0 tons/ha</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- View 3: Weather -->
+        <div id="weather-view" class="dashboard-view" style="display: none">
+          <div class="weather-dashboard">
+            <!-- Current Weather -->
+            <div class="weather-main-card">
+              <div class="weather-header">
+                <div>
+                  <h3 id="weather-location">Ahmedabad, Gujarat</h3>
+                  <p id="weather-date" class="text-muted">Loading...</p>
+                </div>
+                <div class="weather-status-icon" id="weather-icon">
+                  <i class="ph-fill ph-cloud-sun"></i>
+                </div>
+              </div>
+              <div class="weather-body">
+                <h1 id="weather-temp">--°C</h1>
+                <p id="weather-desc">Loading weather data...</p>
+              </div>
+              <div class="weather-details">
+                <div class="detail-item">
+                  <i class="ph ph-drop"></i>
+                  <div>
+                    <span class="label">Humidity</span>
+                    <strong id="weather-humidity">--%</strong>
+                  </div>
+                </div>
+                <div class="detail-item">
+                  <i class="ph ph-wind"></i>
+                  <div>
+                    <span class="label">Wind</span>
+                    <strong id="weather-wind">-- km/h</strong>
+                  </div>
+                </div>
+                <div class="detail-item">
+                  <i class="ph ph-cloud-rain"></i>
+                  <div>
+                    <span class="label">Precipitation</span>
+                    <strong id="weather-rain">-- mm</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Forecast Cards -->
+            <div class="forecast-grid">
+              <div class="forecast-card">
+                <p class="day" id="forecast-day-1">Tomorrow</p>
+                <i class="ph-fill ph-sun" id="forecast-icon-1"></i>
+                <strong class="temp" id="forecast-temp-1">--°</strong>
+              </div>
+              <div class="forecast-card">
+                <p class="day" id="forecast-day-2">Day 3</p>
+                <i class="ph-fill ph-cloud" id="forecast-icon-2"></i>
+                <strong class="temp" id="forecast-temp-2">--°</strong>
+              </div>
+              <div class="forecast-card">
+                <p class="day" id="forecast-day-3">Day 4</p>
+                <i class="ph-fill ph-cloud-rain" id="forecast-icon-3"></i>
+                <strong class="temp" id="forecast-temp-3">--°</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- View 4: Pricing & Profit Analysis -->
+        <div id="pricing-view" class="dashboard-view" style="display: none">
+          <div
+            class="pricing-dashboard"
+            style="
+              display: grid;
+              grid-template-columns: 1fr;
+              gap: 24px;
+              align-items: start;
+            "
+          >
+            <div class="dashboard-card form-section">
+              <div class="card-header-flex">
+                <h3>
+                  <i class="ph-fill ph-calculator"></i> Pricing & Profit
+                  Calculator
+                </h3>
+                <button class="btn btn-outline btn-sm" id="pricing-reset-btn">
+                  <i class="ph ph-arrow-counter-clockwise"></i> Reset
+                </button>
+              </div>
+              <form id="pricing-form" class="prediction-form mt-16">
+                <h4 class="form-section-title">Yield Details</h4>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="pricing-crop">Recommended Crop</label>
+                    <div class="input-wrapper">
+                      <i class="ph-fill ph-plant"></i>
+                      <input
+                        type="text"
+                        id="pricing-crop"
+                        placeholder="e.g., Rice"
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="pricing-area">Cultivation Area (Acres)</label>
+                    <div class="input-wrapper">
+                      <i class="ph-fill ph-map-trifold"></i>
+                      <input
+                        type="number"
+                        id="pricing-area"
+                        step="0.1"
+                        value="1"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="pricing-yield"
+                      >Expected Yield per Acre (kg)</label
+                    >
+                    <div class="input-wrapper">
+                      <i class="ph-fill ph-scales"></i>
+                      <input
+                        type="number"
+                        id="pricing-yield"
+                        step="1"
+                        value="3000"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="pricing-price">Market Price per kg (₹)</label>
+                    <div class="input-wrapper">
+                      <i class="ph-fill ph-currency-inr"></i>
+                      <input
+                        type="number"
+                        id="pricing-price"
+                        step="0.1"
+                        value="25"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <h4 class="form-section-title mt-24">Estimated Expenses (₹)</h4>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="cost-seed">Seed Cost</label>
+                    <input
+                      type="number"
+                      id="cost-seed"
+                      step="1"
+                      placeholder="0"
+                      value="1500"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="cost-fertilizer">Fertilizer Cost</label>
+                    <input
+                      type="number"
+                      id="cost-fertilizer"
+                      step="1"
+                      placeholder="0"
+                      value="4000"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="cost-labor">Labor Cost</label>
+                    <input
+                      type="number"
+                      id="cost-labor"
+                      step="1"
+                      placeholder="0"
+                      value="8000"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="cost-irrigation">Irrigation Cost</label>
+                    <input
+                      type="number"
+                      id="cost-irrigation"
+                      step="1"
+                      placeholder="0"
+                      value="2500"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="cost-transport">Transportation</label>
+                    <input
+                      type="number"
+                      id="cost-transport"
+                      step="1"
+                      placeholder="0"
+                      value="1000"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="cost-other">Other Expenses</label>
+                    <input
+                      type="number"
+                      id="cost-other"
+                      step="1"
+                      placeholder="0"
+                      value="500"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div
+                  class="mt-24"
+                  style="display: flex; gap: 12px; flex-wrap: wrap"
+                >
+                  <button type="submit" class="btn btn-primary">
+                    <i class="ph-fill ph-calculator"></i> Calculate Profit
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline"
+                    id="pricing-save-btn"
+                  >
+                    <i class="ph ph-floppy-disk"></i> Save Analysis
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline"
+                    id="pricing-download-btn"
+                  >
+                    <i class="ph ph-download-simple"></i> Download PDF
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div
+              class="dashboard-card result-section print-section"
+              id="pricing-result-area"
+            >
+              <div class="card-header-flex">
+                <h3>
+                  <i class="ph-fill ph-chart-line-up"></i> Analysis Results
+                </h3>
+                <span class="status-badge" id="profit-status-badge"
+                  >Awaiting Calculation</span
+                >
+              </div>
+
+              <div
+                class="kpi-grid mt-16"
+                style="
+                  display: grid;
+                  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                  gap: 16px;
+                "
+              >
+                <div
+                  class="kpi-card"
+                  style="
+                    background: var(--bg-color);
+                    padding: 16px;
+                    border-radius: 12px;
+                    border: 1px solid var(--border-color);
+                  "
+                >
+                  <span class="text-muted" style="font-size: 14px"
+                    >Total Revenue</span
+                  >
+                  <h2
+                    class="text-primary mt-8"
+                    id="res-revenue"
+                    style="font-size: 24px"
+                  >
+                    ₹0
+                  </h2>
+                </div>
+                <div
+                  class="kpi-card"
+                  style="
+                    background: var(--bg-color);
+                    padding: 16px;
+                    border-radius: 12px;
+                    border: 1px solid var(--border-color);
+                  "
+                >
+                  <span class="text-muted" style="font-size: 14px"
+                    >Total Cost</span
+                  >
+                  <h2
+                    class="text-warning mt-8"
+                    id="res-cost"
+                    style="font-size: 24px"
+                  >
+                    ₹0
+                  </h2>
+                </div>
+                <div
+                  class="kpi-card"
+                  style="
+                    background: var(--bg-color);
+                    padding: 16px;
+                    border-radius: 12px;
+                    border: 1px solid var(--border-color);
+                  "
+                >
+                  <span class="text-muted" style="font-size: 14px"
+                    >Net Profit</span
+                  >
+                  <h2
+                    class="text-success mt-8"
+                    id="res-profit"
+                    style="font-size: 24px"
+                  >
+                    ₹0
+                  </h2>
+                </div>
+                <div
+                  class="kpi-card"
+                  style="
+                    background: var(--bg-color);
+                    padding: 16px;
+                    border-radius: 12px;
+                    border: 1px solid var(--border-color);
+                  "
+                >
+                  <span class="text-muted" style="font-size: 14px">ROI</span>
+                  <h2
+                    class="text-info mt-8"
+                    id="res-roi"
+                    style="font-size: 24px"
+                  >
+                    0%
+                  </h2>
+                </div>
+              </div>
+
+              <div
+                class="analysis-details mt-24"
+                style="
+                  background: var(--bg-color);
+                  padding: 16px;
+                  border-radius: 12px;
+                  border: 1px solid var(--border-color);
+                "
+              >
+                <div
+                  class="detail-row"
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 8px 0;
+                    border-bottom: 1px solid var(--border-color);
+                  "
+                >
+                  <span class="text-muted">Recommended Crop</span>
+                  <strong id="res-crop">-</strong>
+                </div>
+                <div
+                  class="detail-row"
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 8px 0;
+                    border-bottom: 1px solid var(--border-color);
+                  "
+                >
+                  <span class="text-muted">Total Estimated Yield</span>
+                  <strong id="res-yield">0 kg</strong>
+                </div>
+                <div
+                  class="detail-row"
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 8px 0;
+                    border-bottom: 1px solid var(--border-color);
+                  "
+                >
+                  <span class="text-muted">Profit Margin</span>
+                  <strong id="res-margin">0%</strong>
+                </div>
+                <div
+                  class="detail-row"
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 8px 0;
+                  "
+                >
+                  <span class="text-muted">Break-Even Price</span>
+                  <strong id="res-breakeven">₹0 / kg</strong>
+                </div>
+              </div>
+
+              <div class="chart-container mt-24">
+                <h4>Revenue vs Cost Breakdown</h4>
+                <div class="bar-chart mt-16">
+                  <div
+                    class="chart-row"
+                    style="
+                      display: flex;
+                      align-items: center;
+                      margin-bottom: 12px;
+                    "
+                  >
+                    <span
+                      class="chart-label"
+                      style="width: 80px; font-size: 14px"
+                      >Revenue</span
+                    >
+                    <div
+                      class="chart-bar-bg"
+                      style="
+                        flex: 1;
+                        background: var(--border-color);
+                        height: 24px;
+                        border-radius: 12px;
+                        overflow: hidden;
+                        margin: 0 16px;
+                      "
+                    >
+                      <div
+                        class="chart-bar"
+                        id="bar-revenue"
+                        style="
+                          height: 100%;
+                          background: var(--primary-color);
+                          width: 0%;
+                          transition: width 0.5s ease;
+                        "
+                      ></div>
+                    </div>
+                    <span
+                      class="chart-value"
+                      id="val-revenue"
+                      style="width: 100px; text-align: right; font-weight: 600"
+                      >₹0</span
+                    >
+                  </div>
+                  <div
+                    class="chart-row"
+                    style="display: flex; align-items: center"
+                  >
+                    <span
+                      class="chart-label"
+                      style="width: 80px; font-size: 14px"
+                      >Cost</span
+                    >
+                    <div
+                      class="chart-bar-bg"
+                      style="
+                        flex: 1;
+                        background: var(--border-color);
+                        height: 24px;
+                        border-radius: 12px;
+                        overflow: hidden;
+                        margin: 0 16px;
+                      "
+                    >
+                      <div
+                        class="chart-bar"
+                        id="bar-cost"
+                        style="
+                          height: 100%;
+                          background: #f59e0b;
+                          width: 0%;
+                          transition: width 0.5s ease;
+                        "
+                      ></div>
+                    </div>
+                    <span
+                      class="chart-value"
+                      id="val-cost"
+                      style="width: 100px; text-align: right; font-weight: 600"
+                      >₹0</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- History Table -->
+          <div class="dashboard-card mt-24">
+            <div class="card-header-flex">
+              <h3>Saved Analyses</h3>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table" id="pricing-history-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Crop</th>
+                    <th>Area (Acres)</th>
+                    <th>Revenue</th>
+                    <th>Cost</th>
+                    <th>Net Profit</th>
+                    <th>ROI</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- JS will populate this -->
+                  <tr>
+                    <td
+                      colspan="9"
+                      class="text-center text-muted"
+                      style="padding: 24px"
+                    >
+                      No saved analyses yet.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="dashboard.js"></script>
+    <script src="pricing-profit.js"></script>
+  </body>
+</html>
